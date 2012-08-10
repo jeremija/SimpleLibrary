@@ -35,9 +35,9 @@ public class StringUtil {
     /**
      * strip newline characters because it doesn't work well with this.
      */
-    string = string.replace("\n", "");
+//    string = string.replace("\n", "");
     
-    Pattern p = Pattern.compile(pattern);
+    Pattern p = Pattern.compile(pattern, Pattern.DOTALL | Pattern.MULTILINE);
     Matcher m = p.matcher(string);
     
     return m;
@@ -72,16 +72,28 @@ public class StringUtil {
    * @return
    */
   public static String getValueInsideXmlTags(String xml, String tag) {
-    //String regexCode = "(?<=<" + tag + ">)(.*?)(?=</" + tag + ">)";
-    //regexCode.replace("tag", tag);
-    
-    
-    //return regexExtract(xml, regexCode);
     return getValueInsideXmlTags(xml, "<" + tag + ">", "</" + tag + ">");
   }
   
   public static Matcher getMatcherForXmlTags(String xml, String tag) {
     String regexCode = "(?<=<" + tag + ">)(.*?)(?=</" + tag + ">)";
+    Matcher m = regexGetMatcherForPattern(xml, regexCode);
+    return m;
+  }
+  
+  /**
+   * 
+   * @param xml
+   * @param tag - without brackets, tag="body" will return "<body ...>.....</body>"
+   * @return
+   */
+  public static String getValueWithSurroundingTags(String xml, String tag) {
+    String regexCode = "(<" + tag + ".*?>)(.*?)(</" + tag + ">)";
+    return regexExtract(xml, regexCode);
+  }
+  
+  public static Matcher getMatcherWithSurroundingTags(String xml, String tag) {
+    String regexCode = "(<" + tag + ".*?>)(.*?)(</" + tag + ">)";
     Matcher m = regexGetMatcherForPattern(xml, regexCode);
     return m;
   }
@@ -106,4 +118,5 @@ public class StringUtil {
     
     return buffer.toString();
   }
+  
 }

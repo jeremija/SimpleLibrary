@@ -6,16 +6,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 public class Console {
-  private static List<String> mLog = new ArrayList<String>();
+  private static final String TAG = "Console";
   
-  private static final int MAX_LOG_ENTRIES = 20;
+  private List<String> mLog = new ArrayList<String>();
   
-  private static OnLogEventCallback mOnLogEventCallback = null;
+  private final int MAX_LOG_ENTRIES = 20;
   
-  public static String getFullLog() {
+  private OnLogEventCallback mOnLogEventCallback = null;
+  
+  private static Console mConsoleInstance = null;
+  
+  private static Context mAppContext = null;
+  
+  private Handler mHandler = new Handler();
+  
+  public static void setAppContext(Context appContext) {
+    mAppContext = appContext;
+  }
+  
+  public static Console getInstance() {
+    if (mConsoleInstance != null) {
+      return mConsoleInstance;
+    }
+    mConsoleInstance = new Console();
+    return mConsoleInstance;
+  }
+  
+  private Console () {
+  }
+  
+  public String getFullLog() {
     StringBuffer log = new StringBuffer();
     for (String logEntry : mLog) {
       log.append(logEntry + "\n");
@@ -23,7 +48,7 @@ public class Console {
     return log.toString();
   }
   
-  public static void log(String message) {
+  public void log(String message) {
     if (mLog.size() > MAX_LOG_ENTRIES) {
       mLog.remove(0);
     }
@@ -38,23 +63,54 @@ public class Console {
     }
   }
   
-  public static void trimLog() {
+  public void log(int stringResourceId) {
+    if (mAppContext == null) {
+      Log.e(TAG + ".log(int)", "mAppContext is null. Tried to log "  + stringResourceId);
+      return;
+    }
+    log(mAppContext.getString(stringResourceId));
+  }
+  
+  public void trimLog() {
     while (mLog.size() > MAX_LOG_ENTRIES) {
       mLog.remove(0);
     }
   }
   
-  public static void toast(Context context, String message) {
-    log(message);
-    Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-    toast.show();
+  public void toast(int stringResourceId) {
+    if (mAppContext == null) {
+      Log.e(TAG + ".log(int)", "mAppContext is null. Tried to toast "  + stringResourceId);
+      return;
+    }
+    toast(mAppContext.getString(stringResourceId));
   }
   
-  public static void clearLog() {
+  
+  public void toast(final String message) {
+    log(message);
+    
+    if (mAppContext == null) {
+      Log.e(TAG + ".log(int)", "mAppContext is null. Tried to toast "  + message);
+      return;
+    }
+    
+    /* 
+     * the Handler is here to prevent RuntimeException:
+     * can't create a handler inside a thread that has not called Looper.prepare()
+     */
+    mHandler.post(
+        new Runnable() {
+          @Override public void run() {
+            Toast.makeText(mAppContext, message, Toast.LENGTH_SHORT).show();
+          }
+        });
+  }
+  
+  public void clearLog() {
     mLog = new ArrayList<String>();
   }
   
-  public static void setOnLogEventCallback(OnLogEventCallback callback){
+  public void setOnLogEventCallback(OnLogEventCallback callback){
     mOnLogEventCallback = callback;
   }
   
