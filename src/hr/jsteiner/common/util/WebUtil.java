@@ -11,6 +11,9 @@ import java.net.URL;
 
 public class WebUtil {
   
+  private static int READ_TIMEOUT = 0;
+  private static int CONNECT_TIMEOUT = 0;
+  
   /**
    * Download page content to string using GET method
    * @param pageUrl to download from
@@ -22,6 +25,8 @@ public class WebUtil {
         URL url = new URL(pageUrl);
         
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setConnectTimeout(CONNECT_TIMEOUT);
+        connection.setReadTimeout(READ_TIMEOUT);
         connection.setRequestMethod("GET");
         connection.setDoOutput(false);
         connection.setDoInput(true);
@@ -51,6 +56,8 @@ public class WebUtil {
       URL url = new URL(pageUrl);
       
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setConnectTimeout(CONNECT_TIMEOUT);
+      connection.setReadTimeout(READ_TIMEOUT);
       connection.setRequestMethod("POST");
       connection.setDoOutput(true);
       connection.setDoInput(true);
