@@ -15,7 +15,7 @@ import android.util.Log;
 
 public class FileUtil {
   
-  public static final String TAG = "FileUtil";
+  public static final String TAG = FileUtil.class.getCanonicalName();
  
   
   /**

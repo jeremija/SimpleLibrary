@@ -5,8 +5,10 @@ import hr.jsteiner.common.domain.xml.XmlTag;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -310,5 +312,79 @@ public class XmlUtil {
     }
     
     return null;
+  }
+  
+  /**
+   * Recursively search the {@link XmlTag} for a child with specified name. If attributeKey and 
+   * attributeValue are not null, it will search until both name and attribute key-value pairs 
+   * match.
+   * @param xmlTag to start the search from
+   * @param name element name to search
+   * @param attributeKey 
+   * @param attributeValue
+   * @return {@link XmlTag} if found, null if not found
+   */
+  public static XmlTag findByName(final XmlTag xmlTag, final String name,
+      final String attributeKey, final String attributeValue) {
+    if (xmlTag == null || name == null) {
+      return null;
+    }
+    
+    /*
+     * If element name matches
+     */
+    if (name.equals(xmlTag.getName())) {
+      
+      /*
+       * If any of these two parameters is null, do not search by attributes
+       */
+      if (attributeKey == null || attributeValue == null) {
+        return xmlTag;
+      }
+      
+      /*
+       * Else search attribute key-value pairs
+       */
+      if (xmlTag.getAttributes() != null) {
+        Iterator<Entry<String, String>> it = xmlTag.getAttributes().entrySet().iterator();
+        while(it.hasNext()) {
+          Entry<String, String> entry = it.next();
+          if (attributeKey.equals(entry.getKey()) && attributeValue.equals(entry.getValue())) {
+            return xmlTag;
+          }
+        }
+      }
+      
+    }
+    
+    /*
+     * If not found, search elements children recursively 
+     */
+    if (xmlTag.getChildren() != null) {
+      for (XmlTag child : xmlTag.getChildren()) {
+        if (child != null) {
+          XmlTag found = findByName(child, name, attributeKey, attributeValue);
+          if (found != null) {
+            return found;
+          }
+        }
+      }
+    }
+    
+    /*
+     * If nothing found go one step up in recursion
+     */
+    return null;
+  }
+  
+  /**
+   * Recursively search for a child of xmlTag with specific name. 
+   * See {@link #findByName(XmlTag, String, String, String)} 
+   * @param xmlTag
+   * @param name
+   * @return
+   */
+  public static XmlTag findByName(XmlTag xmlTag, String name) {
+    return findByName(xmlTag, name, null, null);
   }
 }

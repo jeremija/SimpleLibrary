@@ -1,3 +1,7 @@
+/**
+ * Some methods in  of this file were borrowed from 
+ * http://code.google.com/p/jlastfmplayer/source/browse/trunk/+jlastfmplayer/JLastFMPlayer/src/core/MD5.java
+ */
 package hr.jsteiner.common.util;
 
 import java.security.MessageDigest;

@@ -11,7 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class Console {
-  private static final String TAG = "Console";
+  private static final String TAG = Console.class.getCanonicalName();
   
   private List<String> mLog = new ArrayList<String>();
   
@@ -65,7 +65,7 @@ public class Console {
   
   public void log(int stringResourceId) {
     if (mAppContext == null) {
-      Log.e(TAG + ".log(int)", "mAppContext is null. Tried to log "  + stringResourceId);
+      Log.e(TAG + "#log(int)", "mAppContext is null. Tried to log "  + stringResourceId);
       return;
     }
     log(mAppContext.getString(stringResourceId));
@@ -79,7 +79,7 @@ public class Console {
   
   public void toast(int stringResourceId) {
     if (mAppContext == null) {
-      Log.e(TAG + ".log(int)", "mAppContext is null. Tried to toast "  + stringResourceId);
+      Log.e(TAG + "#log(int)", "mAppContext is null. Tried to toast "  + stringResourceId);
       return;
     }
     toast(mAppContext.getString(stringResourceId));
@@ -90,7 +90,7 @@ public class Console {
     log(message);
     
     if (mAppContext == null) {
-      Log.e(TAG + ".log(int)", "mAppContext is null. Tried to toast "  + message);
+      Log.e(TAG + "#log(int)", "mAppContext is null. Tried to toast "  + message);
       return;
     }
     
